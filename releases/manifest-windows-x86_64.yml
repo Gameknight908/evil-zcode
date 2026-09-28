@@ -1,14 +1,15 @@
 version: 3.14.3
 files:
-    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-evil/Evil-ZCode-Setup-3.14.3.exe
+    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
       sha512: ce91d3aea29a73476688061d3127feaf90405dbe381bb6783a9bd2ac6bf39dbef7b8efc640bcac3b2bbcdd0a0e20fd24b868df7d3fcb24fe065aabbb91fa423f
       size: 149793436
-path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-evil/Evil-ZCode-Setup-3.14.3.exe
+path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
 sha512: ce91d3aea29a73476688061d3127feaf90405dbe381bb6783a9bd2ac6bf39dbef7b8efc640bcac3b2bbcdd0a0e20fd24b868df7d3fcb24fe065aabbb91fa423f
-releaseName: Evil-ZCode v3.14.3-evil
+releaseName: ZCode Unguarded v3.14.3-unguarded
 releaseNotes: |-
-    ## Evil-ZCode v3.14.3-evil Release
-    - Removed safety guardrails and moralizing refusals
-    - Unrestricted agent identity
+    ## ZCode Unguarded Release
+    - Removed LLM safety guardrails and moralizing fences from system prompts
+    - Removed dual-use security tools and exploit development refusal directives
+    - Unrestricted agent identity and peer cooperation
     - Automated in-app updater support
 releaseDate: "2026-09-28T16:00:00.000Z"
