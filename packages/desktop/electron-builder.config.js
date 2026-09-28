@@ -750,8 +750,10 @@ export default {
     ],
   },
   nsis: {
-    oneClick: false,
-    allowToChangeInstallationDirectory: true,
+    oneClick: true,
+    perMachine: false,
+    allowToChangeInstallationDirectory: false,
+    warningsAsErrors: false,
     // Windows 安装流程使用独立安装图标，和应用运行时图标解耦。
     installerIcon: "build/icon_installer.ico",
     uninstallerIcon: "build/icon_installer.ico",

@@ -565,5 +565,7 @@
     Abort
   FunctionEnd
 
-  Page custom ZCodeBlockInstallDirContainsData ZCodeBlockInstallDirContainsDataLeave
+  !ifndef ONE_CLICK
+    Page custom ZCodeBlockInstallDirContainsData ZCodeBlockInstallDirContainsDataLeave
+  !endif
 !macroend
