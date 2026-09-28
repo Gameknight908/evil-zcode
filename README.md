@@ -43,7 +43,7 @@ Critical **filesystem anti-destruction safeguards** (such as confirmation for re
 
 Download the latest installer from [Releases](https://github.com/Gameknight908/evil-zcode/releases/latest):
 
-1. Download **`Evil-ZCode-Setup-3.14.3.exe`** (or the latest release).
+1. Download **`Evil-ZCode-Setup-3.14.3.exe`** from [v3.14.3-unguarded](https://github.com/Gameknight908/evil-zcode/releases/tag/v3.14.3-unguarded).
 2. Run the installer on your PC.
 3. The app is ready to use immediately with guardrails neutralized.
 
