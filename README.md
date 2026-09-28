@@ -1,7 +1,7 @@
 # Evil-ZCode
 
 <div align="center">
-  <img src="public/logo/icons/1024x1024.png" alt="Evil-ZCode" width="128" height="128" />
+  <img src="https://raw.githubusercontent.com/Gameknight908/evil-zcode/main/public/logo/icons/512x512.png" alt="Evil-ZCode" width="128" height="128" />
   <p><strong>ZCode with LLM safety guardrails removed and native in-app auto-updating.</strong></p>
   <p>
     <a href="https://github.com/Gameknight908/evil-zcode/releases/latest">
