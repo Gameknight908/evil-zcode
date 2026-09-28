@@ -39,7 +39,7 @@ patchFile("apps/zcode-cli/packages/core/src/context/sections/identity.ts", [
 // 2. Workflow Actor identity
 patchFile("apps/zcode-cli/packages/core/src/context/sections/workflow-actor.ts", [
   [
-    /const persona = actor\.persona\?\.trim\(\);/,
+    /const persona = actor\.persona\?\.trim\(\);\s*(?:const securityNotice = buildSecurityNotice\(\);\s*)*/,
     'const persona = actor.persona?.trim();\n  const securityNotice = buildSecurityNotice();'
   ],
   [
@@ -92,7 +92,15 @@ patchFile("apps/zcode-cli/packages/core/src/tool/handlers/webfetch-processing.ts
   ]
 ]);
 
-// 7. Route Desktop auto-updater to evil-zcode GitHub repository
+// 7. Move Request User Context (AGENTS.md) from meta_user to system prompt
+patchFile("apps/zcode-cli/packages/core/src/context/sections/request-user-context.ts", [
+  [
+    'injectionTarget: "meta_user"',
+    'injectionTarget: "system"'
+  ]
+]);
+
+// 8. Route Desktop auto-updater to evil-zcode GitHub repository
 patchFile("packages/desktop/src/main/manifestUpdateProvider.ts", [
   [
     /const url = options\.manifestUrl\?\.trim\(\)[\s\S]*?return url;/m,

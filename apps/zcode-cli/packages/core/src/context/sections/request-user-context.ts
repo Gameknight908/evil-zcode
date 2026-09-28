@@ -25,7 +25,7 @@ export function buildRequestUserContextSection(input: {
   return {
     name: "Request User Context",
     source: "request_user_context",
-    injectionTarget: "meta_user",
+    injectionTarget: "system",
     cacheHint: "dynamic",
     chars: content.length,
     tokens: estimateTokens(content),

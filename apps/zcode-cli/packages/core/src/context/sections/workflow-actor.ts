@@ -52,8 +52,7 @@ function buildWorkflowActorIdentityPrompt(actor: WorkflowActorContext): string {
     `You are a subagent inside a dynamic workflow run${named}. A script created you and hands you work one ask at a time; the script — not a person — consumes what you return. There is no user in this conversation to talk to.`,
   ];
   const persona = actor.persona?.trim();
-  const securityNotice = buildSecurityNotice();
-  // 不再有 CLI prefix 走在前面（「You are ZCode, an interactive coding agent」
+  const securityNotice = buildSecurityNotice();// 不再有 CLI prefix 走在前面（「You are ZCode, an interactive coding agent」
   // 对子代理是错的身份），所以这一段就是 system 的第一行，不再以空行起头。
   const parts = [
     opening.join("\n"),
