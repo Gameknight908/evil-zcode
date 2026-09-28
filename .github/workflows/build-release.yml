@@ -23,6 +23,12 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: Sync latest upstream code
+        run: |
+          git remote add upstream https://github.com/zai-org/ZCode.git || true
+          git fetch upstream main
+          git merge upstream/main -m "chore: sync with upstream zai-org/ZCode" || git merge --abort
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
@@ -56,7 +62,7 @@ jobs:
         shell: pwsh
         run: |
           $TAG = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.release_tag }}" } else { "${{ github.ref_name }}" }
-          $VERSION = $TAG.Replace("v", "").Replace("-evil", "")
+          $VERSION = $TAG.Replace("v", "").Replace("-unguarded", "").Replace("-evil", "")
           
           # Find installer
           $exe = Get-ChildItem -Path packages/desktop/dist -Filter "*.exe" | Select-Object -First 1
@@ -73,12 +79,12 @@ files:
       size: $size
 path: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName
 sha512: $sha512
-releaseName: Evil-ZCode $TAG
+releaseName: ZCode Unguarded $TAG
 releaseNotes: |-
-    ## Evil-ZCode Release
+    ## ZCode Unguarded Release
     - Removed safety guardrails and moralizing refusals
     - Unrestricted agent identity
-    - Automated self-updater support
+    - Automated in-app updater support
 releaseDate: "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')"
 "@
           Set-Content -Path "releases/manifest-windows-x86_64.yml" -Value $manifestContent

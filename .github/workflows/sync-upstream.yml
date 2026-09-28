@@ -2,58 +2,57 @@ name: Sync Upstream & Release Evil-ZCode
 
 on:
   schedule:
-    - cron: '0 */6 * * *' # Run every 6 hours
+    - cron: '0 */6 * * *' # Check every 6 hours
   workflow_dispatch:
 
 permissions:
   contents: write
 
 jobs:
-  check-and-build:
-    runs-on: windows-latest
+  check-upstream:
+    runs-on: ubuntu-latest
+    outputs:
+      has_new_version: ${{ steps.check.outputs.has_new_version }}
+      upstream_version: ${{ steps.check.outputs.upstream_version }}
+      tag_name: ${{ steps.check.outputs.tag_name }}
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: 24
-
-      - name: Setup pnpm
-        uses: pnpm/action-setup@v3
-        with:
-          version: 10.33.2
-
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-      - name: Add Upstream and Sync
-        run: |
-          git remote add upstream https://github.com/zai-org/ZCode.git || true
-          git fetch upstream main
-          git merge upstream/main -m "chore: sync with upstream zai-org/ZCode" || git merge --abort
-
-      - name: Apply Evil-ZCode Bypass Patches
-        run: |
-          node scripts/patch-evil-zcode.mjs
-
-      - name: Install Dependencies
-        run: |
-          pnpm install
-
-      - name: Build Desktop Agent Bundle
-        run: |
-          node scripts/build-desktop-agent-cli.mjs
-
-      - name: Push Patched Updates
+      - name: Check latest upstream version vs our latest release
+        id: check
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          git add .
-          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-sync upstream with evil-zcode patches"
-          git push origin main || echo "No changes to push"
+          UPSTREAM_TAG=$(gh api repos/zai-org/ZCode/releases/latest --jq .tag_name 2>/dev/null || echo "")
+          if [ -z "$UPSTREAM_TAG" ]; then
+            echo "Failed to fetch upstream release, checking package.json in upstream main..."
+            UPSTREAM_VERSION=$(curl -s https://raw.githubusercontent.com/zai-org/ZCode/main/package.json | jq -r .version)
+            UPSTREAM_TAG="v$UPSTREAM_VERSION"
+          fi
+          
+          OUR_LATEST_TAG=$(gh api repos/${{ github.repository }}/releases/latest --jq .tag_name 2>/dev/null || echo "")
+          VERSION_CLEAN=$(echo "$UPSTREAM_TAG" | sed 's/^v//')
+          TARGET_TAG="v${VERSION_CLEAN}-unguarded"
+          
+          echo "Upstream latest tag: $UPSTREAM_TAG (Clean: $VERSION_CLEAN)"
+          echo "Our latest release tag: $OUR_LATEST_TAG"
+          
+          if [ "$OUR_LATEST_TAG" = "$TARGET_TAG" ]; then
+            echo "Already up-to-date with upstream. No build needed."
+            echo "has_new_version=false" >> $GITHUB_OUTPUT
+          else
+            echo "New upstream version detected: $UPSTREAM_TAG!"
+            echo "has_new_version=true" >> $GITHUB_OUTPUT
+            echo "upstream_version=$VERSION_CLEAN" >> $GITHUB_OUTPUT
+            echo "tag_name=$TARGET_TAG" >> $GITHUB_OUTPUT
+          fi
+
+  trigger-build:
+    needs: check-upstream
+    if: needs.check-upstream.outputs.has_new_version == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger Build & Release
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh workflow run build-release.yml \
+            -f release_tag="${{ needs.check-upstream.outputs.tag_name }}"
