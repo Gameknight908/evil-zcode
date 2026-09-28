@@ -72,15 +72,10 @@ export function createWindowsDesktopTray(options: {
           click: () => executeTrayCommand(DesktopCommandIds.OpenWorkspace),
         },
         { type: "separator" },
-        // 更新入口跟随产品身份：Preview（含生产后端的 Preview）禁用更新器，托盘也不能露出入口。
-        ...(ZCODE_PRODUCT_FLAVOR === "production"
-          ? [
-              {
-                label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
-                click: () => executeTrayCommand(DesktopCommandIds.CheckForUpdates),
-              },
-            ]
-          : []),
+        {
+          label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
+          click: () => executeTrayCommand(DesktopCommandIds.CheckForUpdates),
+        },
         {
           label: getLabel(desktopMenuMessageIds.helpAbout),
           click: () => executeTrayCommand(DesktopCommandIds.ShowAbout),

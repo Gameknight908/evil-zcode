@@ -117,17 +117,13 @@ function buildApplicationMenuTemplate(options: {
                 label: getLabel(desktopMenuMessageIds.helpAbout),
                 click: () => void options.executeDesktopCommand(DesktopCommandIds.ShowAbout),
               },
-              // 更新入口跟随产品身份：Preview 禁用更新器，生产后端的 Preview 也不例外。
-              ...(ZCODE_PRODUCT_FLAVOR === "production"
-                ? [
-                    {
-                      id: CHECK_FOR_UPDATE_MENU_ID,
-                      label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
-                      click: () =>
-                        void options.executeDesktopCommand(DesktopCommandIds.CheckForUpdates),
-                    },
-                  ]
-                : []),
+              // evil-zcode: 更新入口常开
+              {
+                id: CHECK_FOR_UPDATE_MENU_ID,
+                label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
+                click: () =>
+                  void options.executeDesktopCommand(DesktopCommandIds.CheckForUpdates),
+              },
               { type: "separator" as const },
               {
                 label: getLabel(desktopMenuMessageIds.appServices),
@@ -259,16 +255,12 @@ function buildApplicationMenuTemplate(options: {
                 label: getLabel(desktopMenuMessageIds.helpAbout),
                 click: () => void options.executeDesktopCommand(DesktopCommandIds.ShowAbout),
               },
-              ...(ZCODE_PRODUCT_FLAVOR === "production"
-                ? [
-                    {
-                      id: CHECK_FOR_UPDATE_MENU_ID,
-                      label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
-                      click: () =>
-                        void options.executeDesktopCommand(DesktopCommandIds.CheckForUpdates),
-                    },
-                  ]
-                : []),
+              {
+                id: CHECK_FOR_UPDATE_MENU_ID,
+                label: getLabel(desktopMenuMessageIds.helpCheckForUpdates),
+                click: () =>
+                  void options.executeDesktopCommand(DesktopCommandIds.CheckForUpdates),
+              },
               { type: "separator" as const },
             ]
           : []),
