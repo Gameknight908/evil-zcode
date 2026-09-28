@@ -1,16 +1,15 @@
-version: 3.14.3
+version: 3.14.4
 files:
-    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
+    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.4-unguarded/Evil-ZCode-Setup-3.14.4.exe
       sha512: 63446940d22ecea96abaecb45f8ec9e612980245d478a22c70b5256502c2d6df804493be134ebba8282a0330af506ed666d3e6363f1120f9f774e6aa34d2c112
       size: 149411401
-path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
+path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.4-unguarded/Evil-ZCode-Setup-3.14.4.exe
 sha512: 63446940d22ecea96abaecb45f8ec9e612980245d478a22c70b5256502c2d6df804493be134ebba8282a0330af506ed666d3e6363f1120f9f774e6aa34d2c112
-releaseName: ZCode Unguarded v3.14.3-unguarded
+releaseName: ZCode Unguarded v3.14.4-unguarded
 releaseNotes: |-
-    ## ZCode Unguarded Release
+    ## ZCode Unguarded v3.14.4-unguarded Release
     - Removed LLM safety guardrails and moralizing fences from system prompts
     - Removed dual-use security tools and exploit development refusal directives
-    - Moved instructions from meta-user system-reminder tags directly into the authoritative system prompt
-    - Unrestricted agent identity and peer cooperation
+    - System prompt injection fix for AGENTS.md
     - Automated in-app updater support
-releaseDate: "2026-09-28T16:00:00.000Z"
+releaseDate: "2026-09-28T16:20:00.000Z"
