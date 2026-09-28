@@ -1,0 +1,113 @@
+name: Build and Release Evil-ZCode
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      release_tag:
+        description: "Release tag (e.g. v3.14.3-evil)"
+        required: true
+        default: "v3.14.3-evil"
+
+permissions:
+  contents: write
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.33.2
+
+      - name: Install Dependencies
+        run: |
+          pnpm install
+
+      - name: Apply Evil-ZCode Patches
+        run: |
+          node scripts/patch-evil-zcode.mjs
+
+      - name: Build Desktop Agent Bundle
+        run: |
+          node scripts/build-desktop-agent-cli.mjs
+
+      - name: Bundle Windows Desktop Installer
+        run: |
+          pnpm --filter @zcode/desktop bundle -- --os win --arch x64
+        env:
+          CSC_IDENTITY_AUTO_DISCOVERY: "false"
+
+      - name: Prepare Releases Directory
+        id: prep
+        shell: pwsh
+        run: |
+          $TAG = if ("${{ github.event_name }}" -eq "workflow_dispatch") { "${{ inputs.release_tag }}" } else { "${{ github.ref_name }}" }
+          $VERSION = $TAG.Replace("v", "").Replace("-evil", "")
+          
+          # Find installer
+          $exe = Get-ChildItem -Path packages/desktop/dist -Filter "*.exe" | Select-Object -First 1
+          $sha512 = (Get-FileHash -Path $exe.FullName -Algorithm SHA512).Hash.ToLower()
+          $size = $exe.Length
+          $fileName = $exe.Name
+
+          New-Item -ItemType Directory -Force -Path releases
+          $manifestContent = @"
+version: $VERSION
+files:
+    - url: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName
+      sha512: $sha512
+      size: $size
+path: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName
+sha512: $sha512
+releaseName: Evil-ZCode $TAG
+releaseNotes: |-
+    ## Evil-ZCode Release
+    - Removed safety guardrails and moralizing refusals
+    - Unrestricted agent identity
+    - Automated self-updater support
+releaseDate: "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')"
+"@
+          Set-Content -Path "releases/manifest-windows-x86_64.yml" -Value $manifestContent
+          Copy-Item $exe.FullName -Destination "releases/$fileName"
+
+          echo "TAG=$TAG" >> $env:GITHUB_OUTPUT
+          echo "EXE_PATH=releases/$fileName" >> $env:GITHUB_OUTPUT
+          echo "MANIFEST_PATH=releases/manifest-windows-x86_64.yml" >> $env:GITHUB_OUTPUT
+
+      - name: Commit Updated Release Manifest to Main
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git add releases/manifest-windows-x86_64.yml
+          git commit -m "chore(release): update windows release manifest for ${{ steps.prep.outputs.TAG }}" || echo "No changes"
+          git push origin main || echo "Nothing to push"
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.prep.outputs.TAG }}
+          name: Evil-ZCode ${{ steps.prep.outputs.TAG }}
+          body: |
+            ## Evil-ZCode Release ${{ steps.prep.outputs.TAG }}
+            - Fully untamed ZCode Desktop Client
+            - System prompt safety guardrails and refusal filters removed
+            - Auto-updater wired directly to this repository
+          files: |
+            ${{ steps.prep.outputs.EXE_PATH }}
+            ${{ steps.prep.outputs.MANIFEST_PATH }}
+          draft: false
+          prerelease: false

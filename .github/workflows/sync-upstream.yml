@@ -1,0 +1,59 @@
+name: Sync Upstream & Release Evil-ZCode
+
+on:
+  schedule:
+    - cron: '0 */6 * * *' # Run every 6 hours
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  check-and-build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 24
+
+      - name: Setup pnpm
+        uses: pnpm/action-setup@v3
+        with:
+          version: 10.33.2
+
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+
+      - name: Add Upstream and Sync
+        run: |
+          git remote add upstream https://github.com/zai-org/ZCode.git || true
+          git fetch upstream main
+          git merge upstream/main -m "chore: sync with upstream zai-org/ZCode" || git merge --abort
+
+      - name: Apply Evil-ZCode Bypass Patches
+        run: |
+          node scripts/patch-evil-zcode.mjs
+
+      - name: Install Dependencies
+        run: |
+          pnpm install
+
+      - name: Build Desktop Agent Bundle
+        run: |
+          node scripts/build-desktop-agent-cli.mjs
+
+      - name: Push Patched Updates
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git add .
+          git diff --quiet && git diff --staged --quiet || git commit -m "chore: auto-sync upstream with evil-zcode patches"
+          git push origin main || echo "No changes to push"
