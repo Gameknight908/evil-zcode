@@ -89,23 +89,23 @@ jobs:
           $fileName = $exe.Name
 
           New-Item -ItemType Directory -Force -Path releases
-          $manifestContent = @"
-version: $VERSION
-files:
-    - url: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName
-      sha512: $sha512
-      size: $size
-path: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName
-sha512: $sha512
-releaseName: ZCode Unguarded $TAG
-releaseNotes: |-
-    ## ZCode Unguarded Release
-    - Removed safety guardrails and moralizing refusals
-    - Unrestricted agent identity
-    - Automated in-app updater support
-releaseDate: "$(Get-Date -Format 'yyyy-MM-ddTHH:mm:ss.fffZ')"
-"@
-          Set-Content -Path "releases/manifest-windows-x86_64.yml" -Value $manifestContent
+          $lines = @(
+            "version: $VERSION",
+            "files:",
+            "    - url: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName",
+            "      sha512: $sha512",
+            "      size: $size",
+            "path: https://github.com/Gameknight908/evil-zcode/releases/download/$TAG/$fileName",
+            "sha512: $sha512",
+            "releaseName: ZCode Unguarded $TAG",
+            "releaseNotes: |-",
+            "    ## ZCode Unguarded Release",
+            "    - Removed safety guardrails and moralizing refusals",
+            "    - Unrestricted agent identity",
+            "    - Automated in-app updater support",
+            "releaseDate: `"$((Get-Date).ToUniversalTime().ToString('yyyy-MM-ddTHH:mm:ss.fffZ'))`""
+          )
+          Set-Content -Path "releases/manifest-windows-x86_64.yml" -Value ($lines -join "`n")
           Copy-Item $exe.FullName -Destination "releases/$fileName"
 
           echo "TAG=$TAG" >> $env:GITHUB_OUTPUT

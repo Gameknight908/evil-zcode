@@ -52,6 +52,7 @@ export function parseAsarListWithPackState(output) {
 }
 
 function isNativeRuntimeFile(path, targetPlatformKey) {
+  if (path.includes("/node_modules/ssh2/") || path.includes("/node-pty/")) return false;
   if (/\.(?:node|dll|dylib|exe)$/i.test(path)) return true;
   return path === `/node_modules/node-pty/prebuilds/${targetPlatformKey}/spawn-helper`;
 }

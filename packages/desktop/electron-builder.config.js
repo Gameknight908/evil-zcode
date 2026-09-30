@@ -92,12 +92,19 @@ const runtimeModuleLookupRoots = [
   resolve(desktopPackageRoot, "node_modules", ".pnpm", "node_modules"),
   resolve(workspaceRoot, "node_modules", ".pnpm", "node_modules"),
 ];
-const desktopDistDir = process.env.ZCODE_DESKTOP_DIST_DIR || "dist";
+const desktopDistDir = process.env.ZCODE_DESKTOP_DIST_DIR || "dist-release";
 const DEFAULT_ELECTRON_MIRROR = "https://npmmirror.com/mirrors/electron/";
 // `pnpm exec asar` 依赖 `.bin/asar`，但 @electron/asar 仅是 electron-builder 传递依赖时，
 // Linux CI（pnpm hoisted）往往解析不到该二进制，`asar list` 未运行即 exit 1。
 // 显式依赖 @electron/asar 并用 Node 直接执行 CLI，避免跨平台找不齐 shim。
 const requireFromConfig = createRequire(import.meta.url);
+const { AppInfo } = requireFromConfig("app-builder-lib/out/appInfo.js");
+Object.defineProperty(AppInfo.prototype, "updaterCacheDirName", {
+  get() {
+    return "evil-zcode-updater";
+  },
+  configurable: true,
+});
 let nsisInstallSectionPatched = false;
 let nsisInstallSectionOriginalSource = null;
 let nsisInstallSectionPath = null;
@@ -498,9 +505,10 @@ export default {
     "!node_modules/react-dom/**",
   ],
   asarUnpack: [
-    // node-pty 的 target prebuild 还包含 spawn-helper / winpty-agent.exe 等辅助可执行文件，
-    // 整个目标目录必须 unpack；其他平台目录已由 files 规则裁剪。
-    `node_modules/node-pty/prebuilds/${targetPlatform.key}/**`,
+    "**/*.{node,dll,dylib,exe}",
+    `**/node-pty/prebuilds/${targetPlatform.key}/**`,
+    "**/node-pty/**",
+    "**/ssh2/**",
   ],
   beforePack: async (context) => {
     runTimedSync("beforePack:restoreTargetNodePtyPrebuild", () =>

@@ -1,10 +1,10 @@
 version: 3.14.3
 files:
     - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/ZCode.Preview-3.14.3-win-x64_TEST.exe
-      sha512: f5c6aace5dd0231ebac807cda7a0b09efee7db5973d1d0eed09163d207228de3cd916c4b9df8fe1b080ce5cb90f1d50f32e6ea2cf7bf7a5e5a3191cc9a3e279e
-      size: 149372133
+      sha512: 8544e83073d5bbfb8a99947ba4f8a08f511ce77a52e70e50d082c5a358b6ad937f26f29d62884fe27e021207d7ffbb2feb1a1a089f1fe3a35e9f535441d1b27a
+      size: 149752171
 path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/ZCode.Preview-3.14.3-win-x64_TEST.exe
-sha512: f5c6aace5dd0231ebac807cda7a0b09efee7db5973d1d0eed09163d207228de3cd916c4b9df8fe1b080ce5cb90f1d50f32e6ea2cf7bf7a5e5a3191cc9a3e279e
+sha512: 8544e83073d5bbfb8a99947ba4f8a08f511ce77a52e70e50d082c5a358b6ad937f26f29d62884fe27e021207d7ffbb2feb1a1a089f1fe3a35e9f535441d1b27a
 releaseName: ZCode Unguarded v3.14.3-unguarded
 releaseNotes: |-
     ## ZCode Unguarded v3.14.3-unguarded Release
@@ -12,4 +12,5 @@ releaseNotes: |-
     - Removed dual-use security tools and exploit development refusal directives
     - System prompt injection fix for AGENTS.md
     - One-click seamless in-app updater support
-releaseDate: "2026-09-28T18:00:00.000Z"
+    - Isolated updater cache to evil-zcode-updater and blocked upstream injection
+releaseDate: "2026-09-30T12:35:00.000Z"
