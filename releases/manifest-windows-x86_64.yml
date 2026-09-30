@@ -1,9 +1,9 @@
 version: 3.14.3
 files:
-    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/ZCode.Preview-3.14.3-win-x64_TEST.exe
+    - url: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
       sha512: 8544e83073d5bbfb8a99947ba4f8a08f511ce77a52e70e50d082c5a358b6ad937f26f29d62884fe27e021207d7ffbb2feb1a1a089f1fe3a35e9f535441d1b27a
       size: 149752171
-path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/ZCode.Preview-3.14.3-win-x64_TEST.exe
+path: https://github.com/Gameknight908/evil-zcode/releases/download/v3.14.3-unguarded/Evil-ZCode-Setup-3.14.3.exe
 sha512: 8544e83073d5bbfb8a99947ba4f8a08f511ce77a52e70e50d082c5a358b6ad937f26f29d62884fe27e021207d7ffbb2feb1a1a089f1fe3a35e9f535441d1b27a
 releaseName: ZCode Unguarded v3.14.3-unguarded
 releaseNotes: |-

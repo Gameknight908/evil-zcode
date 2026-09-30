@@ -72,7 +72,7 @@ export function resolveDesktopProductIdentity(env = process.env) {
  * 生产后端的 Preview 包靠 productName（`ZCode Preview-<version>-...`）与正式包区分。
  */
 export function resolveDesktopArtifactSuffix(env = process.env) {
-  return normalizeDesktopZCodeEnv(env) === "test" ? "_TEST" : "";
+  return "";
 }
 
 /**
