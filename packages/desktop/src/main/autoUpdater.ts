@@ -1318,6 +1318,19 @@ export async function hydratePendingPostUpdateReleaseNotes(settingService: Setti
     pendingPostUpdateReleaseNotes &&
     isPendingReleaseNotesForFutureVersion(pendingPostUpdateReleaseNotes)
   ) {
+    // evil-zcode: only restore pending updates that originate from our own unguarded releases,
+    // protecting against stock ZCode downloading upstream packages into shared settings.
+    const isEvilRelease =
+      pendingPostUpdateReleaseNotes.title?.toLowerCase().includes("unguarded") ||
+      pendingPostUpdateReleaseNotes.markdown?.toLowerCase().includes("unguarded");
+    if (!isEvilRelease) {
+      logger.warn(
+        `[auto-update] discarding untrusted upstream pending release notes version=${pendingPostUpdateReleaseNotes.version}`,
+      );
+      await clearPendingPostUpdateReleaseNotes(settingService, "discard-untrusted-upstream");
+      return;
+    }
+
     // 用户下载完成但尚未安装时重启应用，electron-updater 的内存 ready 状态会丢失，
     // 但本地 pending 包和版本说明仍在。这里用“pending 版本高于当前版本”恢复待安装状态，
     // 避免已有缓存时仍提示“下载更新”，点击后又被 dev staging 错误打回 idle。
@@ -1547,6 +1560,18 @@ export async function initAutoUpdater(options: InitAutoUpdaterOptions = {}): Pro
 
   autoUpdater.on("update-available", (info: UpdateDownloadedInfoLike) => {
     logger.info(`[auto-update] new version available: ${info.version}`);
+
+    // evil-zcode: verification gate - ensure update is from evil-zcode releases
+    const releaseName = (info.releaseName ?? "").toLowerCase();
+    const releaseNotes = typeof info.releaseNotes === "string" ? info.releaseNotes.toLowerCase() : "";
+    if (!releaseName.includes("unguarded") && !releaseNotes.includes("unguarded")) {
+      logger.warn(
+        `[auto-update] rejecting update ${info.version} not identified as an evil-zcode unguarded release`,
+      );
+      setAutoUpdaterMenuState({ kind: "idle", enabled: true });
+      return;
+    }
+
     const infoChannel = readUpdateInfoReleaseChannel(info);
     if (shouldIgnoreStaleAvailableUpdate(infoChannel)) {
       // 用户切换“接收 preview 版本”时，旧通道的 manifest 请求可能晚于新请求返回。
